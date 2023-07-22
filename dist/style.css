@@ -1,0 +1,28 @@
+
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.favDiv {
+    margin: auto;
+    margin-bottom: 1em;
+    width: 70vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    border: solid grey 2px;
+}
+
+.authDiv {
+    border: 2px black solid;
+
+}
+.favAuth {
+    background-color: aqua;
+    margin-top: 0;
+}
+.favQuote {
+    font-style: italic;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding: 0 1em;
+}
