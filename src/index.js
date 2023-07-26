@@ -1,7 +1,6 @@
 import favHTML from './js/favouriteHTML';
 import testerHTML from './js/testerHTML';
 import { initializeApp } from 'firebase/app'
-
 import {
     collection,
     getFirestore,
@@ -12,8 +11,6 @@ import {
     doc,
     deleteDoc
 } from 'firebase/firestore'
-
-
 
 const fbConfig = {
     apiKey: "AIzaSyAfBBXIK9KE_wT7MXG-lq10qI2Ukk8dtp0",
@@ -33,12 +30,8 @@ const quoteContainer = document.querySelector('.quotes')
 const randomQBtn = document.getElementById('generateQuoteBtn')
 const randomQuoteText = document.getElementById('quoteText')
 const randomQuoteAuthor = document.getElementById('quoteAuthor')
-
-
 const favQuoteBtn = document.getElementById('addFav')
 const favQuoteSection = document.getElementById('favQuoteSec')
-
-
 
 const q = []
 let quoteid
@@ -115,4 +108,3 @@ getDocs(favQuoteColRef)
                 })
         })
     })
-

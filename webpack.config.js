@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
     mode: 'development',
-    entry: './src/gptIndex.js',
+    entry: './src/newIndex.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'
