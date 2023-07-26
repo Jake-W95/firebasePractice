@@ -1,3 +1,5 @@
+import favHTML from './js/favouriteHTML';
+import testerHTML from './js/testerHTML';
 import { initializeApp } from 'firebase/app'
 
 import {
@@ -7,8 +9,11 @@ import {
     addDoc,
     getDoc,
     // onSnapshot,
-    doc
+    doc,
+    deleteDoc
 } from 'firebase/firestore'
+
+
 
 const fbConfig = {
     apiKey: "AIzaSyAfBBXIK9KE_wT7MXG-lq10qI2Ukk8dtp0",
@@ -18,7 +23,6 @@ const fbConfig = {
     messagingSenderId: "841655069237",
     appId: "1:841655069237:web:106581cd50f7d3f89b5f7c"
 };
-
 
 initializeApp(fbConfig)
 const db = getFirestore()
@@ -30,17 +34,20 @@ const randomQBtn = document.getElementById('generateQuoteBtn')
 const randomQuoteText = document.getElementById('quoteText')
 const randomQuoteAuthor = document.getElementById('quoteAuthor')
 
+
 const favQuoteBtn = document.getElementById('addFav')
 const favQuoteSection = document.getElementById('favQuoteSec')
 
+
+
 const q = []
 let quoteid
+//initial load
 getDocs(quoteColRef)
     .then((snapshot) => {
         snapshot.docs.forEach((doc) => {
             q.push({ ...doc.data(), id: doc.id })
         })
-
         randomQBtn.addEventListener('click', (e) => {
             e.preventDefault();
             let randNum = Math.floor(Math.random() * q.length)
@@ -56,16 +63,9 @@ getDocs(quoteColRef)
     })
 favQuoteBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    // console.log(quoteid)
     addDoc(favQuoteColRef, { quoteID: quoteid })
 })
-
-
-
-
-
-// TRYING TO INJECT HTML CONTAINING DATA FROM FAVQ COLLECTION AFTER IS IS FETCHED, STRUGGLING AS CAN'T SEEM TO CALL getDoc() INSIDE OF getDocs()
-
+//load favourites
 getDocs(favQuoteColRef)
     .then((snapshot) => {
         var favQ = new Set([])
@@ -79,33 +79,40 @@ getDocs(favQuoteColRef)
     .then((set) => {
 
         set.forEach((id) => {
-
             getDoc(doc(db, 'Quotes', id))
                 .then((doc) => {
-                    let author = doc.data().author
-                    let quote = doc.data().quote
-                    let imageRef = doc.data().imageRef
-                    let tagsList = doc.data().tags
-
+                    let props = {
+                        author: doc.data().author,
+                        quote: doc.data().quote,
+                        imageRef: doc.data().imageRef,
+                        tagsList: doc.data().tags,
+                        id: id
+                    }
                     let div = document.createElement('div')
+
                     div.className = 'favDiv'
-                    div.innerHTML = `
-                    <div class="authDiv">
-                        <img src="${imageRef}" alt="${author}_image" height="200" width="200">
-                        <h1 class="favAuth">${author}: </h1> 
-                    </div>
-                     
-                    <h2 class="favQuote">"${quote}"</h2>
-                    <div>
-                        ${tagsList.map((tag) => {
-                        return `<p>${tag}</p>`
-                    })}
-                    </div>
-                                        `
+                    div.innerHTML = favHTML(props)
                     favQuoteSection.append(div)
+                    return div
+                }).then((div) => {
+                    getDocs(favQuoteColRef)
+                        .then((snapshot) => {
+                            let delButton = div.children[1].children[2]
+                            delButton.addEventListener('click', () => {
+                                let baseId = delButton.id
+                                snapshot.docs.forEach((document) => {
 
+                                    console.log(document.data().quoteID)
+                                    if (document.data().quoteID === baseId) {
+                                        let docRef = doc(db, 'favQuotes', document.id)
+                                        deleteDoc(docRef)
+                                        alert('Removed from favourites')
+                                    }
+                                })
+
+                            })
+                        })
                 })
-
         })
-        // let ref = doc.data().quoteID
     })
+
