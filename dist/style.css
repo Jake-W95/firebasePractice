@@ -1,6 +1,41 @@
+@keyframes fadeIn {
+    from {
+        background-color: black;
+        opacity: 0;
+        scale: 0;
+    }
+
+    to {
+        background-color: white;
+        opacity: 1;
+        scale: 100%
+    }
+}
+
+@keyframes LtoR {
+    from {
+        left: 100%
+    }
+
+    to {
+        left: 0;
+    }
+}
+
+@keyframes RtoL {
+    from {
+        right: 100%
+    }
+
+    to {
+        right: 0
+    }
+}
+
 
 * {
-    font-family: Arial, Helvetica, sans-serif;
+
+    font-family: Ink Free
 }
 
 .favDiv {
@@ -8,50 +43,69 @@
     margin-bottom: 1em;
     width: 70vw;
     display: flex;
-    /* justify-content: center; */
-    border: solid grey 2px;
-    background-color: teal;
+    font-size: 2vw;
 }
 
 .authDiv {
-    border: 2px black solid;
-    background-color: orange;
+    position: relative;
+    animation-name: RtoL;
+    animation-duration: 2.5s;
 
 }
+
+.authDiv img {
+    border-radius: 15px;
+}
+
+.authDiv h1 {
+    font-family: Ink Free;
+}
+
+
 .quoteDiv {
-     display: flex; 
+    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     background-color: rgba(255, 235, 205, 0.462);
-    width:100%
+    width: 100%;
+    position: relative;
+    animation-name: LtoR;
+    animation-duration: 2s;
+
 }
+
 .favAuth {
-    background-color: aqua;
     margin-top: 0;
     text-align: center;
-    /* height: 100%; */
 }
+
 .favQuote {
     font-style: italic;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    height:50%;
+    height: 50%;
+    align-self: center;
     padding: 0 1em;
-    background-color: green;
+
 }
+
 .tags {
     display: flex;
 }
+
 .tagItem {
-    background-color: rgb(82, 82, 255);
-    color: white;
+
+    /* color: white; */
+    background-color: antiquewhite;
+    border-radius: 10px;
     text-align: center;
     min-width: fit-content;
     max-width: 5em;
-    padding: .5em 1em ;
+    padding: .5em 1em;
     margin: 0 .3em
 }
+
 .deleteFav {
     /* color: red; */
+    margin-top: .5em;
     font-size: larger;
 }
