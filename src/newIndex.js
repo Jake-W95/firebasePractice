@@ -1,5 +1,4 @@
 import favHTML from './js/favouriteHTML';
-import testerHTML from './js/testerHTML';
 import { initializeApp } from 'firebase/app'
 import {
   collection,
@@ -7,7 +6,6 @@ import {
   getDocs,
   addDoc,
   getDoc,
-  // onSnapshot,
   doc,
   deleteDoc,
   onSnapshot
@@ -22,11 +20,11 @@ const fbConfig = {
 };
 
 initializeApp(fbConfig)
+//Firebase variables
 const db = getFirestore()
 const quoteColRef = collection(db, 'Quotes')
 const favQuoteColRef = collection(db, 'favQuotes')
-
-const quoteContainer = document.querySelector('.quotes')
+// DOM elements
 const randomQBtn = document.getElementById('generateQuoteBtn')
 const randomQuoteText = document.getElementById('quoteText')
 const randomQuoteAuthor = document.getElementById('quoteAuthor')
@@ -34,59 +32,54 @@ const favQuoteBtn = document.getElementById('addFav')
 const favQuoteSection = document.getElementById('favQuoteSec')
 
 const q = []
-const favouriteQuotes = []
+const favouriteQuotes = new Set()
 let quoteid
 let prevNum
 
 function generateRandomQuote() {
   let randNum = Math.floor(Math.random() * q.length)
   if (prevNum === randNum) {
-  console.log(randNum, prevNum)
-
-    console.log('same')
     return generateRandomQuote()
-  } 
-  
-    randomQuoteText.innerText = q[randNum].quote
-    randomQuoteAuthor.innerText = q[randNum].author
-    quoteid = q[randNum].id
-  
+  }
+  randomQuoteText.innerText = q[randNum].quote
+  randomQuoteAuthor.innerText = q[randNum].author
+  quoteid = q[randNum].id
 
-
-  console.log(randNum, prevNum, 'end')
   prevNum = randNum
 }
 
 function handleDeleteFavorite(e) {
   if (!e.target.matches('.deleteFav')) return;
+  // ID from primary Quotes collection
   const baseId = e.target.id;
+
   getDocs(favQuoteColRef).then((snapshot) => {
     snapshot.docs.forEach((document) => {
       if (document.data().quoteID === baseId) {
         let docRef = doc(db, 'favQuotes', document.id);
         deleteDoc(docRef);
-        // alert('Removed from favorites');
       }
     });
   });
+  favouriteQuotes.delete(baseId)
 }
 
-
-
-
-// Event Listeners
 randomQBtn.addEventListener('click', generateRandomQuote)
 
 favQuoteBtn.addEventListener('click', (e) => {
   e.preventDefault();
+  console.log(favouriteQuotes.has(quoteid), quoteid, favouriteQuotes)
 
-  if (favouriteQuotes.indexOf(quoteid) === -1) {
+  if (!favouriteQuotes.has(quoteid)) {
     addDoc(favQuoteColRef, { quoteID: quoteid })
-    // alert('Added to favourites')
+    favouriteQuotes.add(quoteid)
+    console.log('added')
   } else {
     alert('Already favourited!')
   }
 })
+
+
 favQuoteSection.addEventListener('click', handleDeleteFavorite);
 
 // Load initial quotes
@@ -100,21 +93,15 @@ async function loadInitialQuotes() {
     console.log(error);
   }
 }
-
-// Load favorite quotes
-// async function loadFavoriteQuotes() {
-//   try {
-
-const loadFavoriteQuotes = onSnapshot(favQuoteColRef, (snapshot) => {
+onSnapshot(favQuoteColRef, (snapshot) => {
   favQuoteSection.innerHTML = ''
-  const favQuoteArr = new Set();
   snapshot.docs.forEach((doc) => {
     if (doc.data().quoteID) {
-      favQuoteArr.add(doc.data().quoteID);
+      favouriteQuotes.add(doc.data().quoteID);
     }
   });
 
-  for (const id of favQuoteArr) {
+  for (const id of favouriteQuotes) {
     const docRef = doc(db, 'Quotes', id);
     // const docSnap = 
     getDoc(docRef).then((docSnap) => {
@@ -133,13 +120,7 @@ const loadFavoriteQuotes = onSnapshot(favQuoteColRef, (snapshot) => {
     )
   }
 })
-// } catch (error) {
-//   console.log(error);
-// }
-// }
-
-
 
 loadInitialQuotes()
-loadFavoriteQuotes
-// .then(() => loadFavoriteQuotes())
+
+
